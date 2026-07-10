@@ -24,4 +24,4 @@ SELECT
     DATEDIFF(YEAR, MIN(date_of_birth), GETDATE()) AS oldest_age,
     MAX(date_of_birth) AS youngest_birthdate,
     DATEDIFF(YEAR, MAX(date_of_birth), GETDATE()) AS youngest_age
-FROM gold.dim_patients;
+FROM gold.fact_bills;
