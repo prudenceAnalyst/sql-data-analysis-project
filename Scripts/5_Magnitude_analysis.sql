@@ -1,4 +1,4 @@
-/*
+*
 ===============================================================================
 Magnitude Analysis
 ===============================================================================
@@ -30,26 +30,18 @@ ORDER BY total_patients DESC;
 
 -- Find total patients by address
 SELECT
-    Patient_adrress,
-    COUNT(Patient_adrress) AS total_patients
+    Adress,
+    COUNT(Adress) AS total_patients
 FROM gold.dim_patients
-GROUP BY Patient_adrress
+GROUP BY Adress
 ORDER BY total_patients DESC;
 
 -- Find total patients by Stay_segment
 SELECT
-    Stay_segment,
-    COUNT(Stay_segment) AS total_patients
+    length_of_stay,
+    COUNT(length_of_stay) AS total_patients
 FROM gold.dim_patients
-GROUP BY Stay_segment
-ORDER BY total_patients DESC;
-
--- Find total patients by insurance_provider
-SELECT
-    insurance_provider,
-    COUNT(insurance_provider) AS total_patients
-FROM gold.dim_patients
-GROUP BY insurance_provider
+GROUP BY length_of_stay
 ORDER BY total_patients DESC;
 
 -- Find total patients by Diagnosis
@@ -60,9 +52,33 @@ FROM gold.dim_patients
 GROUP BY Diagnosis
 ORDER BY total_patients DESC;
 
+-- Find total patients by Diagnosis
+SELECT
+    Registration_date,
+    COUNT(patient_id) AS total_patients
+FROM gold.dim_patients
+GROUP BY Registration_date
+ORDER BY total_patients DESC;
+
+-- Find total patients by insurance_provider
+SELECT
+    insurance_provider,
+    COUNT(insurance_provider) AS total_patients
+FROM gold.fact_bills
+GROUP BY insurance_provider
+ORDER BY total_patients DESC;
+
+-- Find total patients by payment status
+SELECT
+    payment_status,
+    COUNT(payment_status) AS total_patients
+FROM gold.fact_bills
+GROUP BY payment_status
+ORDER BY total_patients DESC;
+
 -- Find total patients by patients outcome
 SELECT
-    patient_outcome,
+   patient_outcome,
     COUNT(patient_outcome) AS total_patients
 FROM gold.dim_patients
 GROUP BY patient_outcome
@@ -72,34 +88,30 @@ ORDER BY total_patients DESC;
 SELECT
     Satisfaction,
     COUNT(Satisfaction) AS total_patients
-FROM gold.dim_patients
+FROM gold.fact_bills
 GROUP BY Satisfaction
 ORDER BY total_patients DESC;
 
 -- What is the total bill paid by each insurance provider?
 SELECT
-    p.insurance_provider,
-    SUM(b.insurance_bill) AS total_bill
-FROM gold.dim_patients p
-LEFT JOIN gold.fact_bills b
-    ON p.patient_id = b.Patient_id
-GROUP BY p.insurance_provider
+    Insurance_provider,
+    SUM(Total_bill) AS total_bill
+FROM gold.fact_bills
+GROUP BY Insurance_provider
 ORDER BY total_bill DESC;
 
 -- What is the total bill by each patient?
 SELECT
-    p.patient_id,
-    SUM(b.total_bill) AS total_bill
-FROM gold.dim_patients p
-LEFT JOIN gold.fact_bills b
-    ON p.patient_id = b.Patient_id
-GROUP BY p.patient_id
+    patient_id,
+    SUM(Total_bill) AS total_bill
+FROM gold.fact_bills
+GROUP BY patient_id
 ORDER BY total_bill DESC;
 
 -- What is the total amount by each payment_status?
 SELECT
-  payment_status,
-  SUM(total_bill) AS total_bill,
+    payment_status,
+    SUM(total_bill) AS total_bill,
 	SUM(patient_bill) AS patient_bill,
 	SUM(insurance_bill) AS insurance_bill
 FROM gold.fact_bills
@@ -108,15 +120,35 @@ ORDER BY total_bill DESC;
 
 -- What is the average amount by each payment_status?
 SELECT
-  payment_status,
-  AVG(total_bill) AS average_total_bill,
+    payment_status,
+    AVG(total_bill) AS average_total_bill,
 	AVG(patient_bill) AS average_patient_bill,
 	AVG(insurance_bill) AS average_insurance_bill
 FROM gold.fact_bills
 GROUP BY payment_status
 ORDER BY total_bill DESC;
 
--- Find total customers by countries
+-- What is the total amount by each day?
+SELECT
+    Registration_date,
+    SUM(total_bill) AS total_bill,
+	SUM(patient_bill) AS patient_bill,
+	SUM(insurance_bill) AS insurance_bill
+FROM gold.fact_bills
+GROUP BY Registration_date
+ORDER BY total_bill DESC;
+
+-- What is the average amount by day?
+SELECT
+    Registration_date,
+    AVG(total_bill) AS average_total_bill,
+	AVG(patient_bill) AS average_patient_bill,
+	AVG(insurance_bill) AS average_insurance_bill
+FROM gold.fact_bills
+GROUP BY Registration_date
+ORDER BY average_total_bill DESC;
+
+-- Find total quatity by prestation
 SELECT
     prestation,
     SUM(quantity) AS total_by_prestation
